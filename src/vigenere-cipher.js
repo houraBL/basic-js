@@ -20,13 +20,72 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  VigenereCipheringMachine () {
+    this.type = 'direct'
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+
+  constructor (type = true) {
+    if (type === true) {
+      this.type = 'direct'
+    } else {
+      this.type = 'reverse'
+    }
+  }
+
+  encrypt(message, key) {
+    let result = ''
+    if (!message || !key || typeof message !== 'string' || typeof key !== 'string') {
+      throw new Error('Incorrect arguments!')
+    }
+    message = message.toUpperCase();
+    key = key.toUpperCase()
+    let keyIndex = 0;
+    let maxKeyIndex = key.length;
+    for (let i = 0 ; i < message.length; i++) {
+      if ( /[A-Z]/.test(message[i])) {
+        result += String.fromCharCode(((message.charCodeAt(i) + key.charCodeAt(keyIndex) - 65 * 2)% 26 + 65))
+        keyIndex ++
+        if (keyIndex === maxKeyIndex) {
+          keyIndex = 0;
+        }
+      } else {
+        result += message[i];
+      }
+    }
+    if (this.type === 'direct') {
+      return result;
+    } else {
+      
+      return result.split('').reverse().join('');
+    }
+  }
+
+  decrypt(message, key) {
+    let result = ''
+    if (!message || !key || typeof message !== 'string' || typeof key !== 'string') {
+      throw new Error('Incorrect arguments!')
+    }
+    message = message.toUpperCase();
+    key = key.toUpperCase()
+    let keyIndex = 0;
+    let maxKeyIndex = key.length;
+    for (let i = 0 ; i < message.length; i++) {
+      if ( /[A-Z]/.test(message[i]))  {
+        result += String.fromCharCode((message.charCodeAt(i) - key.charCodeAt(keyIndex) + 26 ) % 26 + 65);
+        keyIndex ++
+        if (keyIndex === maxKeyIndex) {
+          keyIndex = 0;
+        }
+      } else {
+        result += message[i];
+      }
+    }
+    if (this.type === 'direct') {
+      return result;
+    } else {
+      
+      return result.split('').reverse().join('');
+    }
   }
 }
 
